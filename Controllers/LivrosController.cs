@@ -28,8 +28,32 @@ public class LivrosController : ControllerBase
         var livro = livros.FirstOrDefault(l => l.Id == id);
         if (livro == null)
         {
-            return NotFound();
+            return NotFound("ID não encontrado");
         }
         return Ok(livro);
+    }
+
+    [HttpPut("{id}")]
+    public IActionResult PutLivro(int id, [FromBody] Livro livroAtualizado)
+    {
+        if (id != livroAtualizado.Id)
+        {
+            return BadRequest("ID do livro não corresponde ao ID da URL.");
+        }
+
+        var livroExistente = livros.FirstOrDefault(l => l.Id == id);
+        if (livroExistente == null)
+        {
+            return NotFound("ID não encontrado");
+        }
+
+        livroExistente.Titulo = livroAtualizado.Titulo;
+        livroExistente.Autor = livroAtualizado.Autor;
+        livroExistente.Genero = livroAtualizado.Genero;
+        livroExistente.Preco = livroAtualizado.Preco;
+        livroExistente.Estoque = livroAtualizado.Estoque;
+
+        return NoContent();
+
     }
 }
