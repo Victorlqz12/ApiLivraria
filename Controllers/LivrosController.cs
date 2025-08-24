@@ -16,6 +16,17 @@ public class LivrosController : ControllerBase
 
     };
 
+    [HttpPost]
+    public ActionResult<Livro> Post([FromBody] Livro novoLivro)
+    {
+        if (livros.Any(l => l.Id == novoLivro.Id))
+        {
+            return Conflict("ID já existe");
+        }
+        livros.Add(novoLivro);
+        return CreatedAtAction(nameof(Get), new { id = novoLivro.Id }, novoLivro);
+    }
+
     [HttpGet]
     public ActionResult<IEnumerable<Livro>> Get()
     {
@@ -55,5 +66,17 @@ public class LivrosController : ControllerBase
 
         return NoContent();
 
+    }
+
+    [HttpDelete("{id}")]
+    public IActionResult DeleteLivro(int id)
+    {
+        var livro = livros.FirstOrDefault(l => l.Id == id);
+        if (livro == null)
+        {
+            return NotFound("ID não encontrado");
+        }
+        livros.Remove(livro);
+        return NoContent();
     }
 }
